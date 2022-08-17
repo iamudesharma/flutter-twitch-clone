@@ -11,24 +11,15 @@ import 'package:twitch_clone_tutorial/screens/onboarding_screen.dart';
 import 'package:twitch_clone_tutorial/screens/signup_screen.dart';
 import 'package:twitch_clone_tutorial/utils/colors.dart';
 import 'package:twitch_clone_tutorial/widgets/loading_indicator.dart';
+import 'firebase_options.dart';
 import 'models/user.dart' as model;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBizS1MugnEw6op4xiqvXWC1aw6Y7Va4i4",
-        authDomain: "twitch-clone-tutorial.firebaseapp.com",
-        projectId: "twitch-clone-tutorial",
-        storageBucket: "twitch-clone-tutorial.appspot.com",
-        messagingSenderId: "238752454769",
-        appId: "1:238752454769:web:c7d31e54b7fce341d563d0",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (_) => UserProvider(),
@@ -43,9 +34,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Twitch Clone Tutorial',
+      title: 'Wings',
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: backgroundColor,
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromARGB(255, 80, 225, 85),
+        ),
         appBarTheme: AppBarTheme.of(context).copyWith(
           backgroundColor: backgroundColor,
           elevation: 0,

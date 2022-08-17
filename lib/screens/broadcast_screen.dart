@@ -59,7 +59,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     _joinChannel();
   }
 
-  String baseUrl = "https://twitch-tutorial-server.herokuapp.com";
+  String baseUrl = "https://wings-test1.herokuapp.com";
 
   String? token;
 

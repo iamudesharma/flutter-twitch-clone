@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "238752454769",
-    "project_id": "twitch-clone-tutorial",
-    "storage_bucket": "twitch-clone-tutorial.appspot.com"
+    "project_number": "924765570351",
+    "project_id": "new-app-5b696",
+    "storage_bucket": "new-app-5b696.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:238752454769:android:9af3d02007de7c10d563d0",
+        "mobilesdk_app_id": "1:924765570351:android:4874d665693122b0e3cdda",
         "android_client_info": {
-          "package_name": "com.example.twitch_clone_tutorial"
+          "package_name": "com.udesh.wings"
         }
       },
       "oauth_client": [
         {
-          "client_id": "238752454769-2i0vjdn9jls33hodulfb0q5ufbcdaae8.apps.googleusercontent.com",
+          "client_id": "924765570351-3v3npulfi5hmvb2n384msmd2daca2tsd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD9GsMF67iPhK6ag-aZLJ1DIf8mBO6JSGk"
+          "current_key": "AIzaSyB3I1zhWBt1MbEbO4gHqQurKzwxfLVmks8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "238752454769-2i0vjdn9jls33hodulfb0q5ufbcdaae8.apps.googleusercontent.com",
+              "client_id": "924765570351-3v3npulfi5hmvb2n384msmd2daca2tsd.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "238752454769-v575c0lndu5uk6i8joesbgqgdlp3n0lv.apps.googleusercontent.com",
+              "client_id": "924765570351-he4pi6tc6pviftf78rplgtm26hcce80r.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.twitchCloneTutorial"
+                "bundle_id": "com.udesh.wings"
               }
             }
           ]
