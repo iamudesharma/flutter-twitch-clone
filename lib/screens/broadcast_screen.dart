@@ -49,6 +49,7 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
     _addListeners();
 
     await _engine.enableVideo();
+    // await _engine.enableAudio();
     await _engine.startPreview();
     await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
     if (widget.isBroadcaster) {

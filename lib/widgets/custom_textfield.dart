@@ -4,16 +4,19 @@ import 'package:twitch_clone_tutorial/utils/colors.dart';
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final Function(String)? onTap;
+ final String? Function(String?)? validator;
   const CustomTextField({
     Key? key,
     required this.controller,
     this.onTap,
+    this.validator
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onSubmitted: onTap,
+    return TextFormField(
+      validator:validator ,
+      onFieldSubmitted: onTap,
       controller: controller,
       decoration: const InputDecoration(
           focusedBorder: OutlineInputBorder(
@@ -22,7 +25,7 @@ class CustomTextField extends StatelessWidget {
             //   width: 2,
             // ),
           ),
-          enabledBorder: OutlineInputBorder(
+          border: OutlineInputBorder(
             borderSide: BorderSide(
               color: secondaryBackgroundColor,
             ),

@@ -68,4 +68,19 @@ class AuthMethods {
     }
     return res;
   }
+
+  Future<bool> userLogout(
+    BuildContext context,
+  ) async {
+    try {
+      _auth.signOut();
+      showSnackBar(context, "Logout Successfully");
+
+
+      return true;
+    } on FirebaseAuthException catch (e) {
+      showSnackBar(context, e.message!);
+      return false;
+    }
+  }
 }

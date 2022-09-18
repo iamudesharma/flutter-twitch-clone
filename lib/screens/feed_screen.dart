@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:twitch_clone_tutorial/models/livestream.dart';
+import 'package:twitch_clone_tutorial/resources/auth_methods.dart';
 import 'package:twitch_clone_tutorial/resources/firestore_methods.dart';
 import 'package:twitch_clone_tutorial/responsive/resonsive_layout.dart';
 import 'package:twitch_clone_tutorial/screens/broadcast_screen.dart';
+import 'package:twitch_clone_tutorial/screens/onboarding_screen.dart';
 import 'package:twitch_clone_tutorial/widgets/loading_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -26,12 +28,32 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
         child: Column(
           children: [
-            const Text(
-              'Live Users',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
+            Row(
+              children: [
+                Spacer(),
+                const Text(
+                  'Live Users',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () async {
+                    AuthMethods _auth = AuthMethods();
+                    await _auth.userLogout(context).then((value) {
+                      if (value) {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (_) {
+                          return const OnboardingScreen();
+                        }));
+                      }
+                    });
+                  },
+                  icon: Icon(Icons.exit_to_app),
+                ),
+              ],
             ),
             SizedBox(height: size.height * 0.03),
             StreamBuilder<dynamic>(
