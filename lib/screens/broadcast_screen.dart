@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+// import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:twitch_clone_tutorial/config/appId.dart';
 import 'package:twitch_clone_tutorial/providers/user_provider.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+// import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+// import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:twitch_clone_tutorial/resources/firestore_methods.dart';
 import 'package:twitch_clone_tutorial/responsive/resonsive_layout.dart';
 import 'package:twitch_clone_tutorial/screens/home_screen.dart';
@@ -32,7 +33,7 @@ class BroadcastScreen extends StatefulWidget {
 }
 
 class _BroadcastScreenState extends State<BroadcastScreen> {
-  late final RtcEngine _engine;
+  late final RtcEngineEx _engine;
   List<int> remoteUid = [];
   bool switchCamera = true;
   bool isMuted = false;
@@ -45,17 +46,23 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
   }
 
   void _initEngine() async {
-    _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
+    _engine = createAgoraRtcEngineEx();
+    await _engine.initialize(RtcEngineContext(
+      appId: appId,
+    ));
+
+    // _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
     _addListeners();
 
     await _engine.enableVideo();
     // await _engine.enableAudio();
     await _engine.startPreview();
-    await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    await _engine
+        .setChannelProfile(ChannelProfileType.channelProfileLiveBroadcasting);
     if (widget.isBroadcaster) {
-      _engine.setClientRole(ClientRole.Broadcaster);
+      _engine.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
     } else {
-      _engine.setClientRole(ClientRole.Audience);
+      _engine.setClientRole(role: ClientRoleType.clientRoleAudience);
     }
     _joinChannel();
   }
@@ -85,25 +92,25 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
   }
 
   void _addListeners() {
-    _engine.setEventHandler(
-        RtcEngineEventHandler(joinChannelSuccess: (channel, uid, elapsed) {
-      debugPrint('joinChannelSuccess $channel $uid $elapsed');
-    }, userJoined: (uid, elapsed) {
+    _engine.registerEventHandler(
+        RtcEngineEventHandler(onJoinChannelSuccess: (connection, elapsed) {
+      debugPrint('joinChannelSuccess $connection $elapsed');
+    }, onUserJoined: (connection, uid, elapsed) {
       debugPrint('userJoined $uid $elapsed');
       setState(() {
         remoteUid.add(uid);
       });
-    }, userOffline: (uid, reason) {
+    }, onUserOffline: (connection, uid, reason) {
       debugPrint('userOffline $uid $reason');
       setState(() {
         remoteUid.removeWhere((element) => element == uid);
       });
-    }, leaveChannel: (stats) {
+    }, onLeaveChannel: (connection, stats) {
       debugPrint('leaveChannel $stats');
       setState(() {
         remoteUid.clear();
       });
-    }, tokenPrivilegeWillExpire: (token) async {
+    }, onTokenPrivilegeWillExpire: (connection, token) async {
       await getToken();
       await _engine.renewToken(token);
     }));
@@ -116,9 +123,9 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
         await [Permission.microphone, Permission.camera].request();
       }
       await _engine.joinChannelWithUserAccount(
-        token,
-        widget.channelId,
-        Provider.of<UserProvider>(context, listen: false).user.uid,
+        token: token!,
+        channelId: widget.channelId,
+        userAccount: Provider.of<UserProvider>(context, listen: false).user.uid,
       );
     }
   }
@@ -141,43 +148,43 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
   }
 
   _startScreenShare() async {
-    final helper = await _engine.getScreenShareHelper(
-        appGroup: kIsWeb || Platform.isWindows ? null : 'io.agora');
-    await helper.disableAudio();
-    await helper.enableVideo();
-    await helper.setChannelProfile(ChannelProfile.LiveBroadcasting);
-    await helper.setClientRole(ClientRole.Broadcaster);
-    var windowId = 0;
-    var random = Random();
-    if (!kIsWeb &&
-        (Platform.isWindows || Platform.isMacOS || Platform.isAndroid)) {
-      final windows = _engine.enumerateWindows();
-      if (windows.isNotEmpty) {
-        final index = random.nextInt(windows.length - 1);
-        debugPrint('Screensharing window with index $index');
-        windowId = windows[index].id;
-      }
-    }
-    await helper.startScreenCaptureByWindowId(windowId);
-    setState(() {
-      isScreenSharing = true;
-    });
-    await helper.joinChannelWithUserAccount(
-      token,
-      widget.channelId,
-      Provider.of<UserProvider>(context, listen: false).user.uid,
-    );
+    // final helper = await _engine.getScreenShareHelper(
+    //     appGroup: kIsWeb || Platform.isWindows ? null : 'io.agora');
+    // await helper.disableAudio();
+    // await helper.enableVideo();
+    // await helper.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    // await helper.setClientRole(ClientRole.Broadcaster);
+    // var windowId = 0;
+    // var random = Random();
+    // if (!kIsWeb &&
+    //     (Platform.isWindows || Platform.isMacOS || Platform.isAndroid)) {
+    //   final windows = _engine.enumerateWindows();
+    //   if (windows.isNotEmpty) {
+    //     final index = random.nextInt(windows.length - 1);
+    //     debugPrint('Screensharing window with index $index');
+    //     windowId = windows[index].id;
+    //   }
+    // }
+    // await helper.startScreenCaptureByWindowId(windowId);
+    // setState(() {
+    //   isScreenSharing = true;
+    // });
+    // await helper.joinChannelWithUserAccount(
+    //   token,
+    //   widget.channelId,
+    //   Provider.of<UserProvider>(context, listen: false).user.uid,
+    // );
   }
 
   _stopScreenShare() async {
-    final helper = await _engine.getScreenShareHelper();
-    await helper.destroy().then((value) {
-      setState(() {
-        isScreenSharing = false;
-      });
-    }).catchError((err) {
-      debugPrint('StopScreenShare $err');
-    });
+    // final helper = await _engine.getScreenShareHelper();
+    // await helper.destroy().then((value) {
+    //   setState(() {
+    //     isScreenSharing = false;
+    //   });
+    // }).catchError((err) {
+    //   debugPrint('StopScreenShare $err');
+    // });
   }
 
   _leaveChannel() async {
@@ -283,31 +290,39 @@ class _BroadcastScreenState extends State<BroadcastScreen> {
 
   _renderVideo(user, isScreenSharing) {
     return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: "${user.uid}${user.username}" == widget.channelId
-          ? isScreenSharing
-              ? kIsWeb
-                  ? const RtcLocalView.SurfaceView.screenShare()
-                  : const RtcLocalView.TextureView.screenShare()
-              : const RtcLocalView.SurfaceView(
-                  zOrderMediaOverlay: true,
-                  zOrderOnTop: true,
-                )
-          : isScreenSharing
-              ? kIsWeb
-                  ? const RtcLocalView.SurfaceView.screenShare()
-                  : const RtcLocalView.TextureView.screenShare()
-              : remoteUid.isNotEmpty
-                  ? kIsWeb
-                      ? RtcRemoteView.SurfaceView(
-                          uid: remoteUid[0],
-                          channelId: widget.channelId,
-                        )
-                      : RtcRemoteView.TextureView(
-                          uid: remoteUid[0],
-                          channelId: widget.channelId,
-                        )
-                  : Container(),
-    );
+        aspectRatio: 16 / 9,
+        child: "${user.uid}${user.username}" == widget.channelId
+            ? AgoraVideoView(
+                controller: VideoViewController(
+                  rtcEngine: _engine,
+                  canvas: VideoCanvas(
+                    uid: remoteUid[0],
+                  ),
+                ),
+              )
+            : Align(
+                alignment: Alignment.topLeft,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.of(remoteUid.map(
+                      (e) => SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: AgoraVideoView(
+                          controller: VideoViewController.remote(
+                            rtcEngine: _engine,
+                            canvas: VideoCanvas(uid: e),
+                            connection:
+                                RtcConnection(channelId: widget.channelId),
+                            // useFlutterTexture: _isUseFlutterTexture,
+                            // useAndroidSurfaceView: _isUseAndroidSurfaceView,
+                          ),
+                        ),
+                      ),
+                    )),
+                  ),
+                ),
+              ));
   }
 }
